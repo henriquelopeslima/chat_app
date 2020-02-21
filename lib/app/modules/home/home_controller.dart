@@ -7,12 +7,11 @@ part 'home_controller.g.dart';
 class HomeController = _HomeBase with _$HomeController;
 
 abstract class _HomeBase with Store {
-
   @observable
   bool isLoading = false;
 
   @observable
-  FirebaseUser currentUser = null;
+  FirebaseUser currentUser;
 
   final GoogleSignIn googleSignIn = GoogleSignIn();
 
@@ -24,21 +23,22 @@ abstract class _HomeBase with Store {
       final GoogleSignInAuthentication googleSignInAuthentication =
           await googleSignInAccount.authentication;
       final AuthCredential authCredential = GoogleAuthProvider.getCredential(
-          idToken: googleSignInAuthentication.idToken,
-          accessToken: googleSignInAuthentication.accessToken);
+        idToken: googleSignInAuthentication.idToken,
+        accessToken: googleSignInAuthentication.accessToken,
+      );
       final AuthResult authResult =
           await FirebaseAuth.instance.signInWithCredential(authCredential);
       final FirebaseUser user = authResult.user;
       return user;
     } catch (error) {
+      print("Error - - - " + error.toString());
       return null;
     }
   }
 
-  void singOut(){ 
+  void singOut() {
     FirebaseAuth.instance.signOut();
     googleSignIn.signOut();
     currentUser = null;
   }
-
 }

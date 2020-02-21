@@ -1,4 +1,3 @@
-
 import 'package:chat_app/app/modules/home/widgets/text_composer/text_composer_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -8,6 +7,7 @@ import 'package:image_picker/image_picker.dart';
 class TextComposerWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    
     final textComposerController = Modular.get<TextComposerController>();
 
     return Container(
@@ -17,7 +17,8 @@ class TextComposerWidget extends StatelessWidget {
           IconButton(
             icon: Icon(Icons.photo_camera),
             onPressed: () async {
-              textComposerController.imgFile = await ImagePicker.pickImage(source: ImageSource.camera);
+              textComposerController.imgFile =
+                  await ImagePicker.pickImage(source: ImageSource.camera);
               textComposerController.sendMessage();
             },
           ),
@@ -27,9 +28,8 @@ class TextComposerWidget extends StatelessWidget {
               decoration: InputDecoration.collapsed(
                 hintText: "Enviar uma mensagem!",
               ),
-              onChanged: textComposerController.changeText
-              ,
-              onSubmitted: (text) async {
+              onChanged: textComposerController.changeText,
+              onSubmitted: (text){
                 textComposerController.sendMessage();
               },
             ),
@@ -39,9 +39,7 @@ class TextComposerWidget extends StatelessWidget {
               return IconButton(
                 icon: Icon(Icons.send),
                 onPressed: textComposerController.isComposing
-                    ? () async {
-                        textComposerController.sendMessage();
-                      }
+                    ? textComposerController.sendMessage
                     : null,
               );
             },

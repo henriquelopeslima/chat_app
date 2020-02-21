@@ -12,7 +12,6 @@ part 'text_composer_controller.g.dart';
 class TextComposerController = _TextComposerBase with _$TextComposerController;
 
 abstract class _TextComposerBase with Store {
-  
   final menssageController = TextEditingController();
   final homeController = Modular.get<HomeController>();
 
@@ -35,43 +34,42 @@ abstract class _TextComposerBase with Store {
 
   @action
   Future sendMessage() async {
-
     final FirebaseUser user = await homeController.getUser();
 
-    if(user == null){
-      print('usuario nulo');
+    if (user == null) {
+      print('--- usuario nulo ---');
+    } else {
+      Map<String, dynamic> data = {
+        "uid": user.uid,
+        "senderName": user.displayName,
+        "senderPhotoUrl": user.photoUrl,
+        "time": Timestamp.now(),
+      };
+
+      if (imgFile != null) {
+        StorageUploadTask task = FirebaseStorage.instance
+            .ref()
+            .child('img')
+            .child(user.uid + DateTime.now().millisecondsSinceEpoch.toString())
+            .putFile(imgFile);
+
+        homeController.isLoading = true;
+
+        StorageTaskSnapshot taskSnapshot = await task.onComplete;
+        String url = await taskSnapshot.ref.getDownloadURL();
+        data["imgUrl"] = url;
+        imgFile = null;
+
+        homeController.isLoading = false;
+      }
+
+      if (text != null) data['text'] = text;
+      text = "";
+
+      menssageController.clear();
+      isComposing = false;
+
+      Firestore.instance.collection('messages').add(data);
     }
-
-    Map<String, dynamic> data = {
-      "uid":user.uid,
-      "senderName":user.displayName,
-      "senderPhotoUrl":user.photoUrl,
-      "time":Timestamp.now(),
-    };
-
-    if (imgFile != null) {
-      StorageUploadTask task = FirebaseStorage.instance
-          .ref()
-          .child('img')
-          .child(user.uid+DateTime.now().millisecondsSinceEpoch.toString())
-          .putFile(imgFile);
-
-      homeController.isLoading = true;
-
-      StorageTaskSnapshot taskSnapshot = await task.onComplete;
-      String url = await taskSnapshot.ref.getDownloadURL();
-      data["imgUrl"] = url;
-      imgFile = null;
-      
-      homeController.isLoading = false;
-    }
-
-    if(text != null) data['text'] = text;
-    text = "";
-
-    menssageController.clear();
-    isComposing = false;
-
-    Firestore.instance.collection('messages').add(data);
   }
 }

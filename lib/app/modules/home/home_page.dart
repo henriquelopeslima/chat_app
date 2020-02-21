@@ -31,19 +31,25 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Observer(builder: (_) {
-          return Text(homeController.currentUser != null
-              ? homeController.currentUser.displayName
-              : "Chat App");
-        }),
+        title: Observer(
+          builder: (_) {
+            return Text(homeController.currentUser != null
+                ? homeController.currentUser.displayName
+                : "Chat App");
+          },
+        ),
         actions: <Widget>[
-          Observer(builder: (_) {
-            return homeController.currentUser != null
-                ? IconButton(
-                    icon: Icon(Icons.exit_to_app),
-                    onPressed: homeController.singOut)
-                : Container();
-          }),
+          Observer(
+            builder: (_) {
+              return homeController.currentUser != null
+                  ? IconButton(
+                      icon: Icon(Icons.exit_to_app),
+                      onPressed: homeController.singOut)
+                  : IconButton(
+                      icon: Icon(Icons.assignment_ind),
+                      onPressed: homeController.getUser);
+            },
+          ),
         ],
       ),
       body: Column(
@@ -78,11 +84,13 @@ class _HomePageState extends State<HomePage> {
               },
             ),
           ),
-          Observer(builder: (_) {
-            return homeController.isLoading
-                ? LinearProgressIndicator()
-                : Container();
-          }),
+          Observer(
+            builder: (_) {
+              return homeController.isLoading
+                  ? LinearProgressIndicator()
+                  : Container();
+            },
+          ),
           TextComposerWidget(),
         ],
       ),
